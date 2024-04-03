@@ -59,7 +59,7 @@
 
 
 
-.eqv BASE_ADDRESS 0x10008000
+.eqv BASE_ADDRESS 	0x10008000
 
 #  Each 4-byte value has the following structure: 0x00RRGGBB, where 00 are just zeros, RR is
 # an 8-bit colour value for the red component, GG are the 8-bits for the green components, and BB are
@@ -67,26 +67,51 @@
 # 0x0000ff00 is green, and 0x00ffff00 is yellow
 
 
-.eqv Orange 0x00ff7e00
-.eqv Pink 0x00ffa3b1
-.eqv Green 0x00a8e61d
-.eqv Black 0x00000000
-.eqv 
-.eqv 
-.eqv 
-.eqv 
+.eqv Orange 				0x00ff7e00
+.eqv BoundaryPink 			0x00ffa3b1
+.eqv PlatformGreen 			0x00a8e61d
+.eqv Black 				0x00000000
+.eqv Yellow 				0x00fff200
+.eqv CRLightBlue 			0x0099d9ea
+.eqv CRLightGreen 			0x00d3f9bc
+.eqv CRDarkGreen			0x0022b14c
+.eqv EMGrey				0x00546d8e
+.eqv EMRed				0x00ed1c24
+.eqv EMdarkblue				0x002f3699
 
 
-.eqv Sleeptime 40
+.eqv Sleeptime 	40
 
-.eqv NumEnemies 1
-.eqv NumPickUps 3
-.eqv 
-.eqv 
+.eqv NumEnemies 		1
+.eqv NumPickUps 		3
+.eqv JumpHeight			13	# units
+.eqv MaxTimeJumped		2	# time before Collide with platform
+.eqv FallingRate		1
+.eqv JumpRate			13
+.eqv platformMovingRate		1	#unitFrameBuffer
+.eqv EnemieMovingRate		1
+.eqv MainCharacterMovingRate	2
+.eqv PickUpHoverRate		1
+
+
+.eqv HeightofMainCharacter	9
+
+
+
+.eqv RowUnit		64
+.eqv LBM 		16128		#256 * 64 = 16384 or (62*64+0)*4
+.eqv RBM		16124		#(62*64+63)*4 = 16380 
+
+
+
 
 
 #####
 .data
+
+# NumCollected 	.word 	0
+# NumFilled	.word	0
+# NumJumped	.word	0
 
 
 
@@ -96,9 +121,71 @@
 .globl main
 
 main:
+	# Draw the Upper Boundary to Pink
+	li $t0, BASE_ADDRESS	
+	li $t1, BoundaryPink
+	# let t2 be the current address
+	move $t2, $t0
+	# endpoint for upper boundary painting
+	addi $t3, $t2, 256
+	# endpoint for left boundary painting	256 * 64 = 16384
+	addi $t4, $t0, LBM
+	# endpoint for right boundary painting
+	addi $t5, $t0, RBM
+PaintUpperBoundary:
+	beq $t2, $t3, PaintLeftBoundary
+	sw $t1, 0($t2) 	# paint the first (top-left) unit pink
+	
+	addi $t2, $t2, 4
+	j PaintUpperBoundary
+	
+PaintLeftBoundary:
+	# $t2 = $t0 + 256 at this time
+	beq $t2, $t4, PaintRightBoundaryInitial
+	sw $t1, 0($t2)			# paint row 1 column 0 to pink
+	addi $t2, $t2, 256
+	j PaintLeftBoundary
+
+PaintRightBoundaryInitial:
+	# $t2 = $t0 + LBM at this time 
+	
+	add $t2, $t0, 252
+	
+PaintRightBoundary:
+	
+	sw $t1, 0($t2)
+	beq $t2, $t5, END
+	addi $t2, $t2, 256
+	
+	j PaintRightBoundary
+				
+PaintGround:
+	
+		
+			
+				
+						
+	
+	
 	
 ClearScreen:
+	# Draw the Entire Screen to Black
+	li $t0, BASE_ADDRESS	
+	li $t1, Black
+	
+	
+	
 InitializeState:
+	# DrawInitialScreen
+	
+	# DrawBottomPlatform
+	li $t0, BASE_ADDRESS	
+	li $t1, PlatformGreen
+	
+	
+	
+	
+	
 
 mainLoop:
 # for each iteration: 
@@ -168,6 +255,7 @@ Restart:
 QuitGame:
 
 DrawInitialScreen:
+	# Draw Bottom Platform
 	
 
 
@@ -192,11 +280,124 @@ SleepOperation:
 # Game State Logic:
 # 1. Initialize (Draw initial screen, set character and objects state, start main loop)
 # 2. Ongoing	
-# 3. Collision with enemy: -> Draw Game over Screen (State -> take r and q input, show score)
+# 3. Collision with enemy: -> Draw Game over Screen (State -> take r and q input, display NumCollected )
 # 4. Restart -> initialize
-# 5. Collected three pick-ups -> Draw you win Screen (take r and q input, show score)
+# 5. NumFilled == 3  -> Draw you win Screen (take r and q input, display NumCollected)
 # 6. Quit -> exit program (END)
 
+
+
+FillScoreSquare:
+	
+
+
+
+
+
+DrawCharacter:
+
+
+
+
+DrawEnemie:
+
+
+
+
+
+DrawPickup:
+
+
+
+
+
+
+DrawMovingPlatform:
+
+
+
+DrawBottomPlatform:
+
+
+DrawMiddlePlatform:
+
+
+
+
+DrawYouWinScreen:
+
+
+
+
+DrawGameOverScreen:
+
+
+
+
+# JumpHeight
+
+# Collide with ground
+
+
+
+##
+#	Enemie State:
+#	1. Initial
+#	2. Patrol left -> (detect Wall) -> 3
+#		Patrol left -> Collision with MainCharacter -> GameOver
+#	3. Patrol right -> (detect Wall) ->2
+#		Patrol right -> Collision with MainCharacter -> Gameover
+
+
+
+##
+#	PickUp State:
+#	1. initial State
+#	2. Hover Up -> 3
+#		Hover Up -> (Collision with MainCharacter -> 4)
+#	3. Hover Down - > 2
+#		Hover Down -> (Collision with MainCharacter -> 4)
+#	4. Disappear (Erase) ---> Score +1 --> Fill ScoreSquare 
+#		
+
+
+
+## 
+#	ScoreSquare State:
+#	1. NumFilled == 0
+#	2. NumFilled == 1
+#	3. NumFilled == 2
+#	4. NumFilled == 3 ---> You Win State, display score
+#
+#
+
+
+##	
+#	MovingPlatformState:
+#	1. Initial State == initial address
+#	2. MovingLeft --> move with movingRate
+#	3. MovingRight ---> move with MovingRate
+#	4. Steady state
+#
+
+
+##
+#	MainCharacterState:
+#	1. InitialState == initial address + initialDraw
+#	2. SteadyState
+#	3. MoveLeft
+#	4. MoveRight 
+#	5. Jumping	CurrentAddress + jumprate
+#	6. DoubleJump   CurrentAddress + jumpRate
+#	7. FallingState
+#	8. CollideWithPlatform --> 2. steadyState
+#	9. CollideWithEnemie --> ChangeColorVariation(TurnRed) + GameOverState
+#	10. CollideWithPickUps ---> ChangeColorVariation(TurnYellow) ---> ChangeColorBack+ steady?
+#
+
+# MovingPlatform to top = 36 units 27 /2 = 13 
+# height of main character = 9 units
+# 
 
 
 
