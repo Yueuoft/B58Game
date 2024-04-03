@@ -60,6 +60,12 @@
 
 
 .eqv BASE_ADDRESS 	0x10008000
+.eqv EnemieInitialAddress	
+.eqv MainCharacterInitialAddress
+.eqv PickUpsInitialAddresses
+
+
+
 
 #  Each 4-byte value has the following structure: 0x00RRGGBB, where 00 are just zeros, RR is
 # an 8-bit colour value for the red component, GG are the 8-bits for the green components, and BB are
@@ -123,7 +129,8 @@
 main:
 
 
-##############
+################################    BLOCK #1 -------->   DrawBoundaries
+
 DrawBoundaries:
 	# This Block of Code uses all temporary registers t0 - t7 to paint the four boundaries for now
 	#	IT ENDS THE WHOLE PROGRAM after running FOR NOW
@@ -183,7 +190,7 @@ PaintGround:
 	addi $t2, $t2, 4
 	j PaintGround
 			
-				
+################ BLOCK #1 <----------------------------			
 						
 	
 	
@@ -275,8 +282,9 @@ Restart:
 QuitGame:
 
 DrawInitialScreen:
-	# Draw Bottom Platform
+	# 1.  Draw Boundaries 
 	
+	# 2. 
 
 
 RandomNumberGenerator:
@@ -417,6 +425,8 @@ DrawGameOverScreen:
 # MovingPlatform to top = 36 units 27 /2 = 13 
 # height of main character = 9 units
 # 
+
+
 
 
 
