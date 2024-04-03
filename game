@@ -198,7 +198,8 @@ PaintGround:
 						
 	
 	
-########################### Block #3  or 4 ?         ####	
+########################### Clear Screen Block ###################	
+
 ClearScreenSetup:
 	# Draw the Entire Screen to Black
 	li $t0, BASE_ADDRESS	
@@ -216,7 +217,7 @@ ClearScreen:
 	j ClearScreen
 DoneClear:
 	jr $ra	
-	
+########################## Clear Screen Block ##########	
 	
 	
 	
@@ -590,5 +591,6 @@ DrawGameOverScreen:
 # MovingPlatform to top = 36 units 27 /2 = 13 
 # height of main character = 9 units
 # 
+
 
 
