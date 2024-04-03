@@ -219,6 +219,45 @@ InitializeState:
 	
 
 mainLoop:
+	#(t0, t1 untouched for draw enemie
+	# check keyboard input (q for now)
+	jal Check_Keyboard_input
+	
+	# update enemie location (patrolling from right to left for now)
+	li $t2, EnemieMovingRate
+	addi $t3, $zero, 4
+	mult $t2, $t3
+	mflo $t2
+	# $t1 = $ t1 - 4*(move rate)
+	move $t7, $t1
+	sub $t1, $t1, $t2
+	# check for collision with the left wall (exit loop/ game if collide for now)
+	li $t2, EnemieMinPossibleBaseAddress
+	add $t2, $t2, $t0
+	blt $t1, $t2, END
+	
+	# Erase current enemie
+	# t7 be the old position base address (untouched for now)
+	jal EraseCurrentEnemie
+	
+	
+	
+	
+	# Draw new enemie
+	jal DrawEnemie
+	
+	# sleep for a short time
+	li $v0, 32
+	li $a0, Sleeptime			# Wait one second (1000 milliseconds)
+	syscall
+	
+	# loop again
+	j mainLoop
+	
+
+
+
+############
 # for each iteration: 
 
 #• Check for keyboard input.
@@ -236,7 +275,7 @@ mainLoop:
 #• Redraw objects in the new position on the screen.
 
 # sleep for a short time and loop again...
-
+############
 
 
 
@@ -249,6 +288,8 @@ Check_Keyboard_input:
 	li $t9, 0xffff0000	
 	lw $t8, 0($t9)
 	beq $t8, 1, keypress_happened
+	##
+	jr $ra
 
 keypress_happened:
 	lw $t2, 4($t9) 			# this assumes $t9 is set to 0xfff0000 from before
@@ -265,6 +306,10 @@ keypress_happened:
 	beq $t2, 0x44, respond_to_d 	# ASCII code of 'D' is 0x44 or 68 in decimal
 	beq $t2, 0x52, Restart 		# ASCII code of 'R' is 0x52 or 82 in decimal
 	beq $t2, 0x51, QuitGame 	# ASCII code of 'Q' is 0x51 or 81 in decimal
+	
+	##
+
+
 
 END: 
 	#exit program
@@ -283,7 +328,9 @@ respond_to_a:
 respond_to_s:	
 respond_to_d:
 Restart:
-QuitGame:
+	j main
+QuitGame: 
+	j END
 
 DrawInitialScreen:
 	# 1.  Draw Boundaries 
@@ -346,6 +393,9 @@ InitialDrawEnemie:
 	
 	# Base Address Possible Range [$gp + 15888,   $gp + 16108]
 	
+	
+	jal DrawEnemie
+	j mainLoop
 DrawEnemie:
 	# Get Current Base Address 
 	
@@ -379,9 +429,51 @@ DrawEnemie:
 ######### 	
 	
 	
-	j END
+	jr $ra
 	
 ##########	Block #2 Works
+
+EraseCurrentEnemie:
+	# t7 be the base address
+	li $t6, Black
+	# Erase Bottom layer (1)
+	sw $t6, 0($t7)
+	sw $t6, 8($t7)
+	sw $t6, 12($t7)
+	sw $t6, -8($t7)
+	sw $t6, -12($t7)
+	sw $t6, 4($t7)
+	sw $t6, -4($t7)
+	# Erase Layer (2)
+	sw $t6, -252($t7)
+	sw $t6, -260($t7)
+	sw $t6, -248($t7)
+	sw $t6, -264($t7)
+	#  sw $t7, 0($t1)   Black no need to draw
+	
+	# Draw Layer (3)
+	sw $t6, -516($t7)
+	sw $t6, -508($t7)
+	#s w$t7, 0($t1)     Black no need to draw
+	
+	# Erase Layer (4)
+	sw $t6, -768($t7)
+	
+	jr $ra
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
