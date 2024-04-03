@@ -131,6 +131,7 @@
 .globl main
 
 main:
+	jal ClearScreenSetup
 
 ################################    BLOCK #1 -------->   DrawBoundaries
 
@@ -197,11 +198,27 @@ PaintGround:
 						
 	
 	
-	
-ClearScreen:
+########################### Block #3  or 4 ?         ####	
+ClearScreenSetup:
 	# Draw the Entire Screen to Black
 	li $t0, BASE_ADDRESS	
-	li $t1, Black
+	li $t7, Black
+	li $t3, GBM
+	move $t2, $zero
+	move $t1, $t0
+ClearScreen:
+	bgt $t2, $t3, DoneClear
+	
+	add $t1, $t0, $t2
+	sw $t7, 0($t1)
+	addi $t2, $t2, 4
+	
+	j ClearScreen
+DoneClear:
+	jr $ra	
+	
+	
+	
 	
 	
 	
@@ -328,8 +345,11 @@ respond_to_a:
 respond_to_s:	
 respond_to_d:
 Restart:
+	jal ClearScreenSetup
 	j main
+	
 QuitGame: 
+	jal ClearScreenSetup
 	j END
 
 DrawInitialScreen:
@@ -560,7 +580,8 @@ DrawGameOverScreen:
 #	4. MoveRight 
 #	5. Jumping	CurrentAddress + jumprate
 #	6. DoubleJump   CurrentAddress + jumpRate
-#	7. FallingState
+#	7. FallingState    
+#	[if no platform detected!!] ---> (gravity) falling down ---> what about land on Enemie????
 #	8. CollideWithPlatform --> 2. steadyState
 #	9. CollideWithEnemie --> ChangeColorVariation(TurnRed) + GameOverState
 #	10. CollideWithPickUps ---> ChangeColorVariation(TurnYellow) ---> ChangeColorBack+ steady?
@@ -569,4 +590,5 @@ DrawGameOverScreen:
 # MovingPlatform to top = 36 units 27 /2 = 13 
 # height of main character = 9 units
 # 
+
 
