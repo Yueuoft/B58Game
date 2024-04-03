@@ -101,7 +101,7 @@
 .eqv RowUnit		64
 .eqv LBM 		16128		#256 * 64 = 16384 or (62*64+0)*4
 .eqv RBM		16124		#(62*64+63)*4 = 16380 
-
+.eqv GBM		16380
 
 
 
@@ -121,9 +121,19 @@
 .globl main
 
 main:
+
+
+##############
+DrawBoundaries:
+	# This Block of Code uses all temporary registers t0 - t7 to paint the four boundaries for now
+	#	IT ENDS THE WHOLE PROGRAM after running FOR NOW
+	
+	
 	# Draw the Upper Boundary to Pink
 	li $t0, BASE_ADDRESS	
 	li $t1, BoundaryPink
+	# Draw the ground boundary (platform to green later [after drawing upper,left,right boundaries])
+	li $t7, PlatformGreen
 	# let t2 be the current address
 	move $t2, $t0
 	# endpoint for upper boundary painting
@@ -132,6 +142,9 @@ main:
 	addi $t4, $t0, LBM
 	# endpoint for right boundary painting
 	addi $t5, $t0, RBM
+	# endpoint for Ground Boundary painting
+	addi $t6, $t0, GBM
+	
 PaintUpperBoundary:
 	beq $t2, $t3, PaintLeftBoundary
 	sw $t1, 0($t2) 	# paint the first (top-left) unit pink
@@ -154,14 +167,21 @@ PaintRightBoundaryInitial:
 PaintRightBoundary:
 	
 	sw $t1, 0($t2)
-	beq $t2, $t5, END
+	beq $t2, $t5, PaintGroundInitial
 	addi $t2, $t2, 256
 	
 	j PaintRightBoundary
 				
-PaintGround:
+PaintGroundInitial:
+	# start from current t2 + 4
+	addi $t2, $t2, 4
 	
-		
+PaintGround:
+	sw $t7, 0($t2)
+	beq $t2, $t6, END
+	
+	addi $t2, $t2, 4
+	j PaintGround
 			
 				
 						
@@ -316,7 +336,6 @@ DrawMovingPlatform:
 
 
 
-DrawBottomPlatform:
 
 
 DrawMiddlePlatform:
@@ -398,6 +417,7 @@ DrawGameOverScreen:
 # MovingPlatform to top = 36 units 27 /2 = 13 
 # height of main character = 9 units
 # 
+
 
 
 
