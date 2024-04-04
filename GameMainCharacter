@@ -537,6 +537,42 @@ END:
 
 respond_to_w:
 respond_to_a:
+################# Main Character Move Left ##################
+
+MoveLeft:
+	# Check if on the ground
+	
+	# Check if collide with wall
+	
+	# Check if collide with enemie
+	
+	# Check if collide with PickUps
+	
+	# Erase Current Main Character
+	jal EraseMainCharacter
+	
+	# Base Address =  current base address $t2 + 4 * moveRate
+	li $t5, MainCharacterMinXonGround
+	li $t0, BASE_ADDRESS
+	add $t5, $t5, $t0
+	la $t7, MainCharacterCurrentAddress
+	lw $t6, 0($t7)
+	# blt $t6, $t5, END
+	addi $t6, $t6, -8
+	ble $t6, $t5, Restart
+	sw $t6, 0($t7)
+	# Draw new main character
+	
+	jal DrawCharacter
+	
+	j Sleep
+
+
+###############################################################
+
+
+
+
 
 respond_to_d:	
 ################# Main Character Move Right ##################
@@ -932,5 +968,6 @@ DrawGameOverScreen:
 # MovingPlatform to top = 36 units 27 /2 = 13 
 # height of main character = 9 units
 # 
+
 
 
