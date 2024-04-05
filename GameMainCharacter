@@ -255,10 +255,10 @@ MovingPlatformEndCoordinateB:	.word	56 40
 
 
 
-FloatingPlatformXCoordinate:	.word 15 52
+FloatingPlatformXCoordinate:	.word 15 51
 # [15,52] ----[49, 52]    Length == 35
 
-FloatingPlatformENDCoordinate:	.word 49 52
+FloatingPlatformENDCoordinate:	.word 49 51
 
 FloatingPlatformLength:		.word 35
 
@@ -284,7 +284,7 @@ RightWallBoundaryCoordinate:	.word 62
 
 main:
 	jal ClearScreenSetup
-	
+
 ################################    BLOCK #1 -------->   DrawBoundaries
 
 DrawBoundaries:
@@ -341,7 +341,7 @@ PaintGroundInitial:
 	
 PaintGround:
 	sw $t7, 0($t2)
-	beq $t2, $t6, InitialDrawEnemie 
+	beq $t2, $t6, DrawMiddlePlatform
 	
 	addi $t2, $t2, 4
 	j PaintGround
@@ -1292,17 +1292,16 @@ DrawMiddlePlatform:
 	# Load Y coordinate
 	lw $t7, 4($t5)
 	# Calculate Address
-	move $a0, $t5
-	move $a1, $t6
-	move $a2, $t7
+	move $a0, $t6
+	move $a1, $t7
 	jal CalculateAddress
 	move $t0, $v0					
 	
 	# Start Drawing
 	li $t7, PlatformGreen
 DrawMidPlat:
-	bgt $t4, $t0, Sleep
-	sw $t4, 0($t4)
+	bgt $t4, $t0, InitialDrawEnemie
+	sw $t7, 0($t4)
 	
 	addi $t4, $t4, 4
 	j DrawMidPlat
@@ -1329,12 +1328,23 @@ DrawGameOverScreen:
 	
 	
 CalculateAddress: 
-	# Take X and Y
+	# Take a0 = X and a1 = Y
 	# Get Base Address
 	li $t0, BASE_ADDRESS
 	
 	# offset = (Y * 64 + X )* 4
+	addi $t1, $zero, 64
+	mult $a1, $t1
+	mflo $t1
+	add $t1, $t1, $a0
+	addi $t2, $zero, 4
+	mult $t1, $t2
+	mflo $t1
 	
+	add $t1, $t1, $t0
+	move $v0, $t1
+
+	jr $ra
 	
 	
 	
@@ -1405,6 +1415,5 @@ CalculateAddress:
 # MovingPlatform to top = 36 units 27 /2 = 13 
 # height of main character = 9 units
 # 
-
 
 
