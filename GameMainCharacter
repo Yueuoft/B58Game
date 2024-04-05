@@ -239,19 +239,24 @@ EnemieRightMostCoordinate:	.word	47 63
 
 
 
-MovingPlatformInitialCoordinateA:	.word 48 40
+MovingPlatformInitialCoordinateA:	.word 48 39
 # [48, 40]----[61, 40]
 # Length == 14
-MovingPlatformInitialCoordinateB:	.word 61 40
+MovingPlatformInitialCoordinateB:	.word 61 39
 
 
-MovingPlatformEndCoordinateA:	.word 	43 40
+MovingPlatformEndCoordinateA:	.word 	43 39
 # [43, 40]------[56,40]
 # Length == 14
-MovingPlatformEndCoordinateB:	.word	56 40
+MovingPlatformEndCoordinateB:	.word	56 39
 
 # MovingPlatformInitial [48, 40] ---- [61, 40]   length = 14
 # MovingPlatformEndRange [ 44, 40] ------[56, 40]   length = 14
+
+MovingPlatformCurrentCoordinateA:	.word 48 39
+
+MovingPlatformCurrentCoordinateB:	.word 61 39
+
 
 
 
@@ -1260,12 +1265,107 @@ DrawPickup:
 
 
 
-DrawMovingPlatform:
+
+
+
+
+
+
+DrawMovingPlatformInitial:
 	# Set up Platform length and Moving Ranges
+	la $t1, MovingPlatformInitialCoordinateA
+	# Load X coordinate
+	lw $t2, 0($t1)
+	# Load Y coordinate
+	lw $t3, 4($t1)
+	# Calculate Address
+	move $a0, $t2
+	move $a1, $t3
+
+	jal CalculateAddress
+	move $t4, $v0		
+	
+	# Get endpoint
+	la $t5, MovingPlatformInitialCoordinateB
+	# Load X coordinate
+	lw $t6, 0($t5)
+	# Load Y coordinate
+	lw $t7, 4($t5)
+	# Calculate Address
+	move $a0, $t6
+	move $a1, $t7
+	jal CalculateAddress
+	move $t0, $v0		
+	
+StartDrawingFlot: 
+
+	li $t7, PlatformGreen
+DrawFlotPlatI:
+	bgt $t4, $t0, InitialDrawEnemie
+	sw $t7, 0($t4)
+	
+	addi $t4, $t4, 4
+	j DrawFlotPlatI	
+	
+	
+	
+	
+	
+	
+	
+DrawMovingPlatform:
+	# Get Current Coordinate
+	la $t1, MovingPlatformCurrentCoordinateA
+	
+	# Load X coordinate
+	lw $t2, 0($t1)
+	# Load Y coordinate
+	lw $t3, 4($t1)
+	# Calculate Address
+	move $a0, $t2
+	move $a1, $t3
+
+	jal CalculateAddress
+	move $t4, $v0		
+	
+	
+	# Get endpoint
+	la $t5, MovingPlatformCurrentCoordinateB
+	# Load X coordinate
+	lw $t6, 0($t5)
+	# Load Y coordinate
+	lw $t7, 4($t5)
+	# Calculate Address
+	move $a0, $t6
+	move $a1, $t7
+	jal CalculateAddress
+	move $t0, $v0		
+	
+	#StartDrawingFlot
+
+	li $t7, PlatformGreen
+DrawFlotPlat:
+	bgt $t4, $t0, Sleep
+	sw $t7, 0($t4)
+	
+	addi $t4, $t4, 4
+	j DrawFlotPlat
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 
 
-
+###################################
 
 DrawMiddlePlatform:
 	# Set Up platform Length and Coordinates
@@ -1300,7 +1400,7 @@ DrawMiddlePlatform:
 	# Start Drawing
 	li $t7, PlatformGreen
 DrawMidPlat:
-	bgt $t4, $t0, InitialDrawEnemie
+	bgt $t4, $t0, DrawMovingPlatformInitial
 	sw $t7, 0($t4)
 	
 	addi $t4, $t4, 4
@@ -1308,7 +1408,7 @@ DrawMidPlat:
 	
 
 
-
+#################################################
 
 DrawYouWinScreen:
 	la $t0, NumCollected
