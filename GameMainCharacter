@@ -217,14 +217,14 @@ GameState:	.word	1
 MainCRCoordinateXY:	.word 0:2
 
 
-PickUp1CoordinateXY:	.word 23 51
-# [23, 51]
+PickUp1CoordinateXY:	.word 23 50
+# [23, 50]
 
-PickUp2Coordinate:	.word 36 51
-# [36, 51]
+PickUp2CoordinateXY:	.word 36 50
+# [36, 50]
 
-PickUp3Coordinate:	.word	55 39
-# [55, 39]
+PickUp3CoordinateXY:	.word	55 38
+# [55, 38]
 
 EnemieInitialCoordinate:	.word 	32 63
 EnemieCurrentCoordinate:	.word 	32 63
@@ -279,7 +279,33 @@ LeftWallBoundaryCoordinate:	.word 3
 RightWallBoundaryCoordinate:	.word 62
 
 
+ScoreBoxCoordinate:	.word	
+# [2, 2]        [7,2]		[12,2]		[17,2]
+# [2, 7]	[7,7]		[12,7]		[17,7]
 
+ScoreBoxCoordinate1:	.word	2 2
+ScoreBoxCoordinate2:	.word	17 2
+ScoreBoxCoordinate3:	.word	2 7
+ScoreBoxCoordinate4:	.word	17 7
+ScoreBoxCoordinate5:	.word	7 2
+ScoreBoxCoordinate6:	.word	7 7
+ScoreBoxCoordinate7:	.word	12 2
+ScoreBoxCoordinate8:	.word	12 7
+
+
+FillScoreBox1Coordinate:	.word
+#	[3,3]	[6 3]
+
+#	[3,6]	[6,6]
+FillScoreBox2Coordinate:	.word
+#	[8,3]	[11,3]
+
+#	[8,6]	[11,6]
+
+FillScoreBox3Coordinate:	.word
+#	[13,3]	[16,3]
+
+#	[13,6]	[16,6]
 
 
 
@@ -289,7 +315,7 @@ RightWallBoundaryCoordinate:	.word 62
 
 main:
 	jal ClearScreenSetup
-
+	
 ################################    BLOCK #1 -------->   DrawBoundaries
 
 DrawBoundaries:
@@ -1034,7 +1060,33 @@ SleepOperation:
 
 
 
-FillScoreSquare:
+
+#######################
+DrawScoreBox:
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FillScoreBox:
 	
 
 
@@ -1256,9 +1308,75 @@ EraseCurrentEnemie:
 
 
 
+##############################################3
+
+InitialDrawPickup:
+
+	la $t1, PickUp1CoordinateXY
+	lw $t2, 0($t1)
+	lw $t3, 4($t1)
+	
+	move $a0, $t2
+	move $a1, $t3
+	jal CalculateAddress
+	move $t4, $v0
+	
+	li $t5, Yellow
+	sw $t5, 0($t4)
+	sw $t5, -260($t4)
+	sw $t5, -252($t4)
+	sw $t5, -512($t4)
+	sw $t5, -764($t4)
+	sw $t5, -772($t4)
+	
+	la $t1, PickUp2CoordinateXY
+	lw $t2, 0($t1)
+	lw $t3, 4($t1)
+	
+	move $a0, $t2
+	move $a1, $t3
+	jal CalculateAddress
+	move $t4, $v0
+	
+	li $t5, Yellow
+	sw $t5, 0($t4)
+	sw $t5, -260($t4)
+	sw $t5, -252($t4)
+	sw $t5, -512($t4)
+	sw $t5, -764($t4)
+	sw $t5, -772($t4)
+
+	la $t1, PickUp3CoordinateXY
+	lw $t2, 0($t1)
+	lw $t3, 4($t1)
+	
+	move $a0, $t2
+	move $a1, $t3
+	jal CalculateAddress
+	move $t4, $v0
+	
+	li $t5, Yellow
+	sw $t5, 0($t4)
+	sw $t5, -260($t4)
+	sw $t5, -252($t4)
+	sw $t5, -512($t4)
+	sw $t5, -764($t4)
+	sw $t5, -772($t4)
+	
+	
+	j InitialDrawEnemie
+######################################
+DrawPickUp:
 
 
-DrawPickup:
+
+
+
+
+
+##############################################
+
+ErasePickUp:
 	
 
 
@@ -1269,7 +1387,7 @@ DrawPickup:
 
 
 
-
+###############################################
 
 DrawMovingPlatformInitial:
 	# Set up Platform length and Moving Ranges
@@ -1301,13 +1419,13 @@ StartDrawingFlot:
 
 	li $t7, PlatformGreen
 DrawFlotPlatI:
-	bgt $t4, $t0, InitialDrawEnemie
+	bgt $t4, $t0, InitialDrawPickup
 	sw $t7, 0($t4)
 	
 	addi $t4, $t4, 4
 	j DrawFlotPlatI	
 	
-	
+###################################################	
 	
 	
 	
@@ -1351,8 +1469,9 @@ DrawFlotPlat:
 	addi $t4, $t4, 4
 	j DrawFlotPlat
 	
+##################################	
 	
-	
+EraseANDdrawMovingPlatform:
 	
 	
 	
@@ -1515,5 +1634,4 @@ CalculateAddress:
 # MovingPlatform to top = 36 units 27 /2 = 13 
 # height of main character = 9 units
 # 
-
 
