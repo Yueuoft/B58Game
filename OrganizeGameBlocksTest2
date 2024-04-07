@@ -1142,9 +1142,9 @@ Step5: # Check_Keyboard_input
 		li $t9, 0xffff0000	
 		lw $t8, 0($t9)
 		beq $t8, 1, keypress_happened
-	
+		
 		#j CheckState
-
+		j Step6
 		keypress_happened:
 			lw $t2, 4($t9) 			# this assumes $t9 is set to 0xfff0000 from before
 			beq $t2, 0x77, respond_to_w 	# ASCII code of 'w' is 0x77 or 119 in decimal
@@ -1160,7 +1160,7 @@ Step5: # Check_Keyboard_input
 			beq $t2, 0x44, respond_to_d 	# ASCII code of 'D' is 0x44 or 68 in decimal
 			beq $t2, 0x52, Restart 		# ASCII code of 'R' is 0x52 or 82 in decimal
 			beq $t2, 0x51, QuitGame 	# ASCII code of 'Q' is 0x51 or 81 in decimal
-		j Step6
+		
 	##################################### Check Keyboard Input Part		
 		
 respond_to_w:
