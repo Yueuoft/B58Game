@@ -929,24 +929,62 @@ Step3: # Update Enemie
 	
 EnemiePatrolLeft:
 	# EraseEnemie
-	
+	jal EraseCurrentEnemie
 	# UpdateCurrentCoordinate to left
+	la $t0, EnemieCurrentCoordinate
+	lw $t1, 0($t0)
+	lw $t2, 4($t0)
 	
-	# DrawEnemie
+	addi $t1, $t1, -4
+	sw $t1, 0($t0)
+	
 	
 	# CheckCollison and Update Enemie State
+	ble $t1, 20, EnemieCollideLeftWall
+	
+	
+	# DrawEnemie
+	jal DrawEnemie
+	
+	j Step4
+	
+EnemieCollideLeftWall:
+	# Update Enemie State
+	la $t0, EnemieState
+	li $t1, 2
+	sw $t1, 0($t0)
 	
 	# Branch to next step
 	j Step4
 
+
 EnemiePatrolRight:	
-		# EraseEnemie
+	# EraseEnemie
+	jal EraseCurrentEnemie
+	# UpdateCurrentCoordinate to left
+	la $t0, EnemieCurrentCoordinate
+	lw $t1, 0($t0)
+	lw $t2, 4($t0)
 	
-	# UpdateCurrentCoordinate to right
+	addi $t1, $t1, 4
+	sw $t1, 0($t0)
 	
-	# DrawEnemie
 	
 	# CheckCollison and Update Enemie State
+	bge $t1, 44, EnemieCollideRightWall
+	
+	
+	# DrawEnemie
+	jal DrawEnemie
+	
+	j Step4
+	
+	
+EnemieCollideRightWall:
+	# Update Enemie State
+	la $t0, EnemieState
+	li $t1, 1
+	sw $t1, 0($t0)
 	
 	# Branch to next step
 	j Step4
