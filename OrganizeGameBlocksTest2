@@ -1650,20 +1650,331 @@ QuitGame:
 	j END
 ############################################################################
 Step7: # Detect_Collison_with_PickUps
+
+CheckP1:	
+	la $t1, MainCharacterCurrentCoordinate
+	la $t2, PickUp1CoordinateXY
+	
+	lw $t3, 0($t1)  # X1 main CR
+	lw $t4, 4($t1)	# Y1 MainCR
+	
+	lw $t5, 0($t2)	#X2
+	lw $t6, 4($t2)	#Y2
+	
+	# X1 - X2 less than or equal to 3, depends on which on is bigger
+	
+	# AND Y2 - Y1 is less than or equal to 3 Or Y1 - Y2 is less than or equal to 1
+	CheckP1X:
+	bge $t3, $t5, AtRight1
+	ble $t3, $t5, AtLeft1
+	
+AtRight1:
+	
+	sub $t1, $t3, $t5
+	ble $t1, 3, CheckP1Y
+	
+	j CheckP2
+	
+AtLeft1:
+	sub $t1, $t5, $t3
+	ble $t1, 3, CheckP1Y
+	
+	j CheckP2
+
+
+CheckP1Y:
+	bgt $t4, $t6, Down1
+	blt $t4, $t6, AirUp1
+Down1:	
+	sub $t7, $t4, $t6
+	ble $t7, 1, CollisionPickUp1
+	
+	j CheckP2
+	
+AirUp1:
+	sub $t7, $t6, $t4
+	ble $t7, 3, CollisionPickUp1
+	
+	j CheckP2	
+
+CollisionPickUp1:
+	# Erase PickUp and Set PickUp state to 4
+	
+	# ErasePickUp1
+	la $t1, PickUp1CoordinateXY
+	lw $t2, 0($t1)
+	lw $t3, 4($t1)
 	
 	
 	
+	move $a0, $t2
+	move $a1, $t3
+	
+	jal ErasePickUp
+	
+	# Update state to 4
+	la $t0, PickUpState1
+	li $t4, 4
+	sw $t4, 0($t0)
+	
+	# Set its coordinate to [0,0]
+	
+	la $t1, PickUp1CoordinateXY
+	sw $zero, 0($t1)
+	sw $zero, 4($t1)
+	
+	# Set NumCollected to NumCollected ++
+	la $t1, NumCollected
+	lw $t2, 0($t1)
+	addi $t2, $t2, 1
+	sw $t2, 0($t1)
+	
+	# FillScoreBox --> NumFilled ++
+	
+	# Call FillScoreBox Function
 	
 	
 	
+	la $t1, NumFilled
+	lw $t2, 0($t1)
+	addi $t2, $t2, 1
+	sw $t2, 0($t1)
+	
+	
+	# Check NumFilled, if == 3, Update Game State to YOU WON == 2
+	
+	beq $t2, 3, UpdateToWin
+	j Step8
+	
+	UpdateToWin:
+	# Set GameState to You Won
+	
+	la $t1, GameState
+	li $t2, 2	# 2 as Win
+	sw $t2, 0($t1)
+	
+	# branch to 
+	j DrawYouWinPage
+	
+	
+######	
+	
+CheckP2:	
+	la $t1, MainCharacterCurrentCoordinate
+	la $t2, PickUp2CoordinateXY
+	
+	lw $t3, 0($t1)  # X1 main CR
+	lw $t4, 4($t1)	# Y1 MainCR
+	
+	lw $t5, 0($t2)	#X2
+	lw $t6, 4($t2)	#Y2
+	
+	# X1 - X2 less than or equal to 3, depends on which on is bigger
+	
+	# AND Y2 - Y1 is less than or equal to 3 Or Y1 - Y2 is less than or equal to 1
+	CheckP2X:
+	bge $t3, $t5, AtRight2
+	ble $t3, $t5, AtLeft2
+	
+AtRight2:
+	
+	sub $t1, $t3, $t5
+	ble $t1, 3, CheckP2Y
+	
+	j CheckP3
+	
+AtLeft2:
+	sub $t1, $t5, $t3
+	ble $t1, 3, CheckP2Y
+	
+	j CheckP3
+
+
+CheckP2Y:
+	bgt $t4, $t6, Down2
+	blt $t4, $t6, AirUp2
+Down2:	
+	sub $t7, $t4, $t6
+	ble $t7, 1, CollisionPickUp2
+	
+	j CheckP3
+	
+AirUp2:
+	sub $t7, $t6, $t4
+	ble $t7, 3, CollisionPickUp2
+	
+	j CheckP3	
+
+CollisionPickUp2:
+	# Erase PickUp and Set PickUp state to 4
+	
+	# ErasePickUp1
+	la $t1, PickUp2CoordinateXY
+	lw $t2, 0($t1)
+	lw $t3, 4($t1)
 	
 	
 	
+	move $a0, $t2
+	move $a1, $t3
+	
+	jal ErasePickUp
+	
+	# Update state to 4
+	la $t0, PickUpState2
+	li $t4, 4
+	sw $t4, 0($t0)
+	
+	# Set its coordinate to [0,0]
+	
+	la $t1, PickUp2CoordinateXY
+	sw $zero, 0($t1)
+	sw $zero, 4($t1)
+	
+	# Set NumCollected to NumCollected ++
+	la $t1, NumCollected
+	lw $t2, 0($t1)
+	addi $t2, $t2, 1
+	sw $t2, 0($t1)
+	
+	# FillScoreBox --> NumFilled ++
+	
+	# Call FillScoreBox Function
 	
 	
 	
+	la $t1, NumFilled
+	lw $t2, 0($t1)
+	addi $t2, $t2, 1
+	sw $t2, 0($t1)
 	
 	
+	# Check NumFilled, if == 3, Update Game State to YOU WON == 2
+	
+	beq $t2, 3, UpdateToWin
+	j Step8
+	
+	#UpdateToWin:
+	# Set GameState to You Won
+	
+	la $t1, GameState
+	li $t2, 2	# 2 as Win
+	sw $t2, 0($t1)
+	
+	# branch to GameOverPage
+	j DrawYouWinPage
+		
+	
+	
+##########
+######	
+	
+CheckP3:	
+	la $t1, MainCharacterCurrentCoordinate
+	la $t2, PickUp3CoordinateXY
+	
+	lw $t3, 0($t1)  # X1 main CR
+	lw $t4, 4($t1)	# Y1 MainCR
+	
+	lw $t5, 0($t2)	#X2
+	lw $t6, 4($t2)	#Y2
+	
+	# X1 - X2 less than or equal to 3, depends on which on is bigger
+	
+	# AND Y2 - Y1 is less than or equal to 3 Or Y1 - Y2 is less than or equal to 1
+	CheckP3X:
+	bge $t3, $t5, AtRight3
+	ble $t3, $t5, AtLeft3
+	
+AtRight3:
+	
+	sub $t1, $t3, $t5
+	ble $t1, 3, CheckP3Y
+	
+	j Step8
+	
+AtLeft3:
+	sub $t1, $t5, $t3
+	ble $t1, 3, CheckP3Y
+	
+	j Step8
+
+
+CheckP3Y:
+	bgt $t4, $t6, Down3
+	blt $t4, $t6, AirUp3
+Down3:	
+	sub $t7, $t4, $t6
+	ble $t7, 1, CollisionPickUp3
+	
+	j Step8
+	
+AirUp3:
+	sub $t7, $t6, $t4
+	ble $t7, 3, CollisionPickUp3
+	
+	j Step8
+
+CollisionPickUp3:
+	# Erase PickUp and Set PickUp state to 4
+	
+	# ErasePickUp1
+	la $t1, PickUp3CoordinateXY
+	lw $t2, 0($t1)
+	lw $t3, 4($t1)
+	
+	
+	
+	move $a0, $t2
+	move $a1, $t3
+	
+	jal ErasePickUp
+	
+	# Update state to 4
+	la $t0, PickUpState3
+	li $t4, 4
+	sw $t4, 0($t0)
+	
+	# Set its coordinate to [0,0]
+	
+	la $t1, PickUp3CoordinateXY
+	sw $zero, 0($t1)
+	sw $zero, 4($t1)
+	
+	# Set NumCollected to NumCollected ++
+	la $t1, NumCollected
+	lw $t2, 0($t1)
+	addi $t2, $t2, 1
+	sw $t2, 0($t1)
+	
+	# FillScoreBox --> NumFilled ++
+	
+	# Call FillScoreBox Function
+	
+	
+	
+	la $t1, NumFilled
+	lw $t2, 0($t1)
+	addi $t2, $t2, 1
+	sw $t2, 0($t1)
+	
+	
+	# Check NumFilled, if == 3, Update Game State to YOU WON == 2
+	
+	beq $t2, 3, UpdateToWin
+	j Step8
+	
+	#UpdateToWin:
+	# Set GameState to You Won
+	
+	la $t1, GameState
+	li $t2, 2	# 2 as Win
+	sw $t2, 0($t1)
+	
+	# branch to GameOverPage
+	j DrawYouWinPage
+		
+		
 	
 	
 	
