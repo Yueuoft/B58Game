@@ -47,7 +47,7 @@
 .eqv JumpRate			12
 .eqv platformMovingRate		1	#unitFrameBuffer
 .eqv EnemieMovingRate		1
-.eqv MainCharacterMovingRate	2
+.eqv MainCharacterMovingRate	3
 .eqv PickUpHoverRate		1
 
 
@@ -780,8 +780,6 @@ InitialDrawCharacter:
 										
 											
 												
-													
-####################################################################### MainLoop Start HERE
 ############
 # for each iteration: 
 
@@ -1293,10 +1291,21 @@ respond_to_a:
 
 MoveLeft:
 	
-	# Check if collide with wall, if so branch to next step
+	# Check if collide with Left wall, if so branch to next step
+	la $t1, MainCharacterCurrentCoordinate
+	lw $t2, 0($t1)	#X
+	lw $t3, 4($t1)
+	
+	# if x less than or equal to 2 + move rate, then collide  MainCharacterMovingRate
+	
+	ble $t2, 4, CollideLeftWall
 	
 	
 	# Check if in the NO GO Zone
+	
+	# ...!
+	
+	
 	
 	# if in the no go zone, branch to next step directly
 	
@@ -1311,13 +1320,19 @@ MoveLeft:
 	lw $t2, 0($t1)
 	lw $t3, 4($t1)
 	# Update to new Coordinate x = x-1
-	subi $t2, $t2, 1
+	subi $t2, $t2, MainCharacterMovingRate
 	sw $t2, 0($t1)
 	
 	jal DrawCharacter
 	
 	j Step6
-
+	
+CollideLeftWall:
+	la $t1, Collision_with_Wall_Signal
+	li $t2, 1
+	sw $t2, 0($t1)
+	
+	j Step6
 
 ###############################################################
 
@@ -1331,6 +1346,11 @@ respond_to_d:
 MoveRight:
 	
 	# Check if collide with wall, if so branch to next step
+	la $t1, MainCharacterCurrentCoordinate
+	lw $t2, 0($t1)	#X
+	lw $t3, 4($t1)
+	
+	bge $t2, 60, CollideRightWall
 	
 	
 	# Check if in the NO GO Zone
@@ -1349,8 +1369,8 @@ MoveRight:
 	la $t1, MainCharacterCurrentCoordinate
 	lw $t2, 0($t1)
 	lw $t3, 4($t1)
-	# Update to new Coordinate x = x-1
-	addi $t2, $t2, 1
+	# Update to new Coordinate x = x+1
+	addi $t2, $t2, MainCharacterMovingRate
 	sw $t2, 0($t1)
 	
 	
@@ -1363,6 +1383,12 @@ MoveRight:
 	
 	j Step6
 
+CollideRightWall:
+	la $t1, Collision_with_Wall_Signal
+	li $t2, 2
+	sw $t2, 0($t1)
+	
+	j Step6
 
 ###############################################################
 ##################################### Respond to keyboard
@@ -1490,6 +1516,20 @@ Step7: # Detect_Collison_with_PickUps
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 
 
@@ -1575,7 +1615,6 @@ DrawYouWinPage:
 
 GameOverPage:
 	j END
-
 
 
 
