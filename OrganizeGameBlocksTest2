@@ -782,10 +782,7 @@ InitialDrawCharacter:
 												
 													
 ####################################################################### MainLoop Start HERE
-			
-#   mainLoop:
-																
-	############
+############
 # for each iteration: 
 
 #• Check for keyboard input.
@@ -856,18 +853,12 @@ InitializeState:
 	# Set Main Character State
 	la $t1, MainCharacterState
 	sw $zero, 0($t1)
-	
-	# Set main character to initial position
-	
-	la $t1, MainCharacterInitialCoordinate
-	la $t2, MainCharacterCurrentCoordinate
-	lw $t3, 0($t1)
-	lw $t4, 4($t1)
-	sw $t3, 0($t2)
-	sw $t4, 4($t2)
+
+
 	
 	
-	#
+	
+
 
 
 mainLoop:
@@ -1142,9 +1133,9 @@ Step5: # Check_Keyboard_input
 		li $t9, 0xffff0000	
 		lw $t8, 0($t9)
 		beq $t8, 1, keypress_happened
-		
-		#j CheckState
+	
 		j Step6
+
 		keypress_happened:
 			lw $t2, 4($t9) 			# this assumes $t9 is set to 0xfff0000 from before
 			beq $t2, 0x77, respond_to_w 	# ASCII code of 'w' is 0x77 or 119 in decimal
@@ -1160,7 +1151,7 @@ Step5: # Check_Keyboard_input
 			beq $t2, 0x44, respond_to_d 	# ASCII code of 'D' is 0x44 or 68 in decimal
 			beq $t2, 0x52, Restart 		# ASCII code of 'R' is 0x52 or 82 in decimal
 			beq $t2, 0x51, QuitGame 	# ASCII code of 'Q' is 0x51 or 81 in decimal
-		
+	
 	##################################### Check Keyboard Input Part		
 		
 respond_to_w:
@@ -1498,18 +1489,67 @@ Step7: # Detect_Collison_with_PickUps
 	
 	
 	
-
+	
 
 
 
 
 Step8: # Detect Collision with Enemie
+	la $t1, MainCharacterCurrentCoordinate
+	la $t2, EnemieCurrentCoordinate
+	
+	lw $t3, 0($t1)  # X1 main CR
+	lw $t4, 4($t1)	# Y1 MainCR
+	
+	lw $t5, 0($t2)	#X2
+	lw $t6, 4($t2)	#Y2
+	
+	# Check for Y1 -Y2 less than or euqal to 1 first
+	# Check which one is great first then sub and compare with 1
+	
+	# bgt $t4, $t6, Down
+	# blt $t4, $t6, Up
+	
+	sub $t7, $t6, $t4
+	# if t7 less than or equal to 1
+	ble $t7, 1, YCloseCheckX
+	
+	j Step9
+	
+	
+	
+YCloseCheckX:	
+	# check if X1-X2 less than or equal to 5
+	# check for greater or smaller, then great minus small
+	
+	bgt $t3, $t5, AtRight
+	blt $t3, $t5, AtLeft
+AtRight:
+	
+	sub $t1, $t3, $t5
+	ble $t1, 5, EnemieCollision
+	
+	j Step9
+	
+	
+	
+AtLeft:
+	sub $t1, $t5, $t3
+	ble $t1, 5, EnemieCollision
+	
+	j Step9
 
-
-
-
-
-
+EnemieCollision:
+	# Set GameState to Lose
+	
+	la $t1, GameState
+	li $t2, 3	# 3 as LOSE
+	sw $t2, 0($t1)
+	
+	# branch to GameOverPage
+	j GameOverPage
+	
+	
 
 Step9: # Check if there is any signals or states 
 	
@@ -1529,116 +1569,12 @@ Step10: # Sleep for a while and j back to mainLoop
 
 	
 
-#END:
-
-	#exit program
-	#li $v0, 10
-	#syscall
-
-	
+DrawYouWinPage:
+	j END
 
 
-
-
-
-########
-# Check another collison box so the main character can not erase the platforms
-
-
-
-
-
-
-
-
-
-
-# What Could Triger Falling State???
-# if No Ground/ platform detected under the feet
-
-### Thus No ground detected would be the triger.
-### Keep detect ground at every loop??? in other words, 
-#	Collision_with_Ground_Signal should be updated at every loop.
-
-
-
-
-# if Jumped/ Double Jumped
-# keep falling at falling rate until ground is detected, then go back to steady/ initial state.
-
-# how to detect???
-# Do we need to detect the after move position????
-# Move left/ right/ first, then detect ground???
-# Detect ground first, before keep falling???
-
-
-
-
-
-######
-#    MainCharacterState:	.word 	0
-#  Initial/steady state == 0
-# Jumping State == 1 --> detect up
-# Falling State == 2 ----> detect down
-
-
-
-
-
-
-#FallingState:
-	# Check downside collison
-	CheckDownSide:
-		# Check (X,Y) coordinates
-		
-
-
-
-	# if on the ground, set signal to == 0
-	# and Branch to next line in mainLoop!!!
-	
-	# if collide with enemie or pick Ups: ---->
-	
-	
-	
-	
-	
-
-	# Erase Current Main Character
-	jal EraseMainCharacter
-	
-	# Base Address =  current base address $t2 + 256 * FallingRate
-	li $t5, FallingRate
-	li $t0, 256
-	
-	mult $t0, $t5
-	mflo $t5
-	
-	# Update Base Address AND (X,Y) coordinate!!!
-	
-	
-	la $t7, MainCharacterCurrentAddress
-	lw $t6, 0($t7)
-	# blt $t6, $t5, END
-	
-	# li $t2, MainCharacterMaxXonGround
-	
-	add $t6, $t6, $t5
-	
-	# bge $t6, $t2, Sleep
-	
-	sw $t6, 0($t7)
-	# Draw new main character
-	
-	jal DrawCharacter
-	
-	# Jump to Next line in mainLoop
-	j Sleep
-
-
-
-
-#### Need to figure out the jumping logic and falling state and ground detection logic
+GameOverPage:
+	j END
 
 
 
@@ -2035,12 +1971,6 @@ EraseMainCharacter:
 
 
 
-DrawYouWinPage:
-	j END
-
-
-GameOverPage:
-	j END
 
 
 
