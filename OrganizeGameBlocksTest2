@@ -976,12 +976,36 @@ Step4: # Update PickUps
 
 HoverUp1:	
 	# ErasePickUp1
+	la $t1, PickUp1CoordinateXY
+	lw $t2, 0($t1)
+	lw $t3, 4($t1)
+	
+	
+	
+	move $a0, $t2
+	move $a1, $t3
+	
+	jal ErasePickUp
 	
 	# UpdateCurrentCoordinate to Up
+	la $t1, PickUp1CoordinateXY
+	lw $t2, 0($t1)
+	lw $t3, 4($t1)
+	
+	addi $t3, $t3, -1
+	sw $t3, 4($t1)
+	
+	move $a0, $t2
+	move $a1, $t3
 	
 	# DrawPickUp1
+	jal DrawPickUp
 	
 	# Update PickUp1 State
+	la $t0, PickUpState1
+	li $t1, 2
+	sw $t1, 0($t0) # set to 2 hoverdown
+	
 	
 	# Branch to next step (Check for next pick Up)
 	j PU2
@@ -991,13 +1015,35 @@ HoverUp1:
 
 HoverDown1:
 	# ErasePickUp1
+	la $t1, PickUp1CoordinateXY
+	lw $t2, 0($t1)
+	lw $t3, 4($t1)
 	
+	
+	
+	move $a0, $t2
+	move $a1, $t3
+	
+	jal ErasePickUp
 	# UpdateCurrentCoordinate to Down
+	la $t1, PickUp1CoordinateXY
+	lw $t2, 0($t1)
+	lw $t3, 4($t1)
+	
+	addi $t3, $t3, 1
+	sw $t3, 4($t1)
+	
+	
+	move $a0, $t2
+	move $a1, $t3
 	
 	# DrawPickUp1
-	
+	jal DrawPickUp
 	
 	# Update PickUp1 State
+	la $t0, PickUpState1
+	li $t1, 1
+	sw $t1, 0($t0) # set to 1 hoverup
 	
 	# Branch to next step (Check for next pick Up)
 	j PU2
@@ -1028,12 +1074,37 @@ PU2:
 
 HoverUp2:	
 	# ErasePickUp2
+	la $t1, PickUp2CoordinateXY
+	lw $t2, 0($t1)
+	lw $t3, 4($t1)
+	
+	
+	
+	move $a0, $t2
+	move $a1, $t3
+	
+	jal ErasePickUp
 	
 	# UpdateCurrentCoordinate to Up
+	la $t1, PickUp2CoordinateXY
+	lw $t2, 0($t1)
+	lw $t3, 4($t1)
 	
-	# DrawPickUp1
+	addi $t3, $t3, -1
+	sw $t3, 4($t1)
 	
-	# Update PickUp1 State
+	move $a0, $t2
+	move $a1, $t3
+	
+	# DrawPickUp2
+	jal DrawPickUp
+	
+	# Update PickUp2 State
+	la $t0, PickUpState2
+	li $t1, 2
+	sw $t1, 0($t0) # set to 2 hoverdown
+	
+	
 	
 	# Branch to next step (Check for next pick Up)
 	j PU3
@@ -1043,13 +1114,36 @@ HoverUp2:
 
 HoverDown2:
 	# ErasePickUp2
+	la $t1, PickUp2CoordinateXY
+	lw $t2, 0($t1)
+	lw $t3, 4($t1)
 	
-	# UpdateCurrentCoordinate to Down
+	
+	
+	move $a0, $t2
+	move $a1, $t3
+	
+	jal ErasePickUp
+	
+	# UpdateCurrentCoordinate to Up
+	la $t1, PickUp2CoordinateXY
+	lw $t2, 0($t1)
+	lw $t3, 4($t1)
+	
+	addi $t3, $t3, 1
+	sw $t3, 4($t1)
+	
+	move $a0, $t2
+	move $a1, $t3
 	
 	# DrawPickUp2
-	
+	jal DrawPickUp
 	
 	# Update PickUp2 State
+	la $t0, PickUpState2
+	li $t1, 1
+	sw $t1, 0($t0) # set to 1 hoverUp
+	
 	
 	# Branch to next step (Check for next pick Up)
 	j PU3
@@ -1080,12 +1174,35 @@ PU3:
 
 HoverUp3:	
 	# ErasePickUp3
+	la $t1, PickUp3CoordinateXY
+	lw $t2, 0($t1)
+	lw $t3, 4($t1)
+	
+	
+	
+	move $a0, $t2
+	move $a1, $t3
+	
+	jal ErasePickUp
 	
 	# UpdateCurrentCoordinate to Up
+	la $t1, PickUp3CoordinateXY
+	lw $t2, 0($t1)
+	lw $t3, 4($t1)
+	
+	addi $t3, $t3, -1
+	sw $t3, 4($t1)
+	
+	move $a0, $t2
+	move $a1, $t3
 	
 	# DrawPickUp3
+	jal DrawPickUp
 	
 	# Update PickUp3 State
+	la $t0, PickUpState3
+	li $t1, 2
+	sw $t1, 0($t0) # set to 2 hoverdown
 	
 	# Branch to next step (Check for next pick Up)
 	j Step5
@@ -1095,16 +1212,39 @@ HoverUp3:
 
 HoverDown3:
 	# ErasePickUp3
+	la $t1, PickUp3CoordinateXY
+	lw $t2, 0($t1)
+	lw $t3, 4($t1)
 	
-	# UpdateCurrentCoordinate to Down
+	
+	
+	move $a0, $t2
+	move $a1, $t3
+	
+	jal ErasePickUp
+	
+	# UpdateCurrentCoordinate to Up
+	la $t1, PickUp3CoordinateXY
+	lw $t2, 0($t1)
+	lw $t3, 4($t1)
+	
+	addi $t3, $t3, 1
+	sw $t3, 4($t1)
+	
+	move $a0, $t2
+	move $a1, $t3
 	
 	# DrawPickUp3
-	
+	jal DrawPickUp
 	
 	# Update PickUp3 State
+	la $t0, PickUpState3
+	li $t1, 1
+	sw $t1, 0($t0) # set to 1 hoverUp
 	
 	# Branch to next step (Check for next pick Up)
 	j Step5
+	
 	
 
 
@@ -1918,23 +2058,99 @@ EraseMainCharacter:
 
 ################### Draw Pick Up Function  ################
 # 7. 
+DrawPickUp:
 
-
-
-
-
-
+	# push the current ra to the stack
+	addi $sp, $sp, -4
+	sw $ra, 0($sp)
+	
+	move $a0, $t2
+	move $a1, $t3
+	jal CalculateAddress
+	move $t4, $v0
+	
+	li $t5, Yellow
+	sw $t5, 0($t4)
+	sw $t5, -260($t4)
+	sw $t5, -252($t4)
+	sw $t5, -512($t4)
+	sw $t5, -764($t4)
+	sw $t5, -772($t4)
+	
+	# pop the ra from the stack and jump back to caller
+	lw $ra, 0($sp)
+	addi $sp, $sp, 4
+	
+	jr $ra
+	
 
 # 7. 
 ########################################
 
 ######################## Erase Pick Up Function ###################
 # 8.
+ErasePickUp:
+	
+	# push the current ra to the stack
+	addi $sp, $sp, -4
+	sw $ra, 0($sp)
+	
+	move $a0, $t2
+	move $a1, $t3
+	jal CalculateAddress
+	move $t4, $v0
+	
+	li $t5, Yellow
+	li $t6, Black
 
+Erase1:	
+	lw $t7, 0($t4)
+	bne $t7, $t5, Erase2
+	sw $t6, 0($t4)
 
+Erase2:	
+	
+	lw $t7, -260($t4)
+	bne $t7, $t5, Erase3
+	sw $t6, -260($t4)
 
+	
+Erase3:
 
+	lw $t7, -252($t4)
+	bne $t7, $t5, Erase4
+	sw $t6, -252($t4)
 
+	
+Erase4:
+
+	lw $t7, -512($t4)
+	bne $t7, $t5, Erase5
+	sw $t6, -512($t4)
+
+	
+Erase5:
+
+	lw $t7, -764($t4)
+	bne $t7, $t5, Erase6
+	sw $t6, -764($t4)
+
+	
+Erase6:
+
+	lw $t7, -772($t4)
+	bne $t7, $t5, DoneE
+	sw $t6, -772($t4)
+	
+	
+DoneE:
+	
+	# pop the ra from the stack and jump back to caller
+	lw $ra, 0($sp)
+	addi $sp, $sp, 4
+	
+	jr $ra
+	
 
 
 # 8.
