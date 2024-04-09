@@ -177,7 +177,9 @@ MovingPlatformState:	.word	1
 # Patrol right == 2
 # Patrol left == 1
 
-
+MovingPlatformState2:	.word	1
+# PatrolUp == 1
+# PatrolDown == 2
 
 
 
@@ -195,11 +197,31 @@ MovingPlatformEndCoordinateB:	.word	56 39
 # MovingPlatformInitial [48, 40] ---- [61, 40]   length = 14
 # MovingPlatformEndRange [ 44, 40] ------[56, 40]   length = 14
 
+MovingPlatform2InitialCoordinateA:	.word	48 27
+
+MovingPlatform2InitialCoordinateB:	.word	61 27
+
+MovingPlatform2EndCoordinateA:		.word	48 13
+
+MovingPlatform2EndCoordinateB:		.word	61 13
+
+
+
+
+
+
+
+
+
+
 MovingPlatformCurrentCoordinateA:	.word 48 39
 
 MovingPlatformCurrentCoordinateB:	.word 61 39
 
 
+MovingPlatform2CurrentCoordinateA:	.word 48 27
+
+MovingPlatform2CurrentCoordinateB:	.word 61 27
 
 
 
@@ -419,7 +441,7 @@ StartDrawingFlot:
 
 	li $t7, PlatformGreen
 DrawFlotPlatI:
-	bgt $t4, $t0, InitialDrawScoreBox
+	bgt $t4, $t0, DrawMovingPlatform2Initial
 	sw $t7, 0($t4)
 	
 	addi $t4, $t4, 4
@@ -430,6 +452,53 @@ DrawFlotPlatI:
 
 ################################# INITIAL DRAW OF MOVING PLATFORM <----------------
 
+################################# INITIAL DRAW OF MOVING PLATFORM 2 ------------->
+
+DrawMovingPlatform2Initial:
+	# Set up Platform length and Moving Ranges
+	la $t1, MovingPlatform2InitialCoordinateA
+	# Load X coordinate
+	lw $t2, 0($t1)
+	# Load Y coordinate
+	lw $t3, 4($t1)
+	# Calculate Address
+	move $a0, $t2
+	move $a1, $t3
+
+	jal CalculateAddress
+	move $t4, $v0		
+	
+	# Get endpoint
+	la $t5, MovingPlatform2InitialCoordinateB
+	# Load X coordinate
+	lw $t6, 0($t5)
+	# Load Y coordinate
+	lw $t7, 4($t5)
+	# Calculate Address
+	move $a0, $t6
+	move $a1, $t7
+	jal CalculateAddress
+	move $t0, $v0		
+	
+StartDrawingFlot2: 
+
+	li $t7, PlatformGreen
+DrawFlotPlatII:
+	bgt $t4, $t0, InitialDrawScoreBox
+	sw $t7, 0($t4)
+	
+	addi $t4, $t4, 4
+	j DrawFlotPlatII	
+
+
+
+
+
+
+
+
+
+################################# INITIAL DRAW OF MOVING PLATFORM 2 <----------------
 
 ######################### Initial DRAW THE SCORE BOX ----------------->
 # BRANCH HERE FROM INITIAL MOVING PLATFORM, AND BRANCH TO INITIALDRAWPICKUP AFTER DONE IT
@@ -889,6 +958,45 @@ InitializeState:
 	li $t2, 62
 	sw $t2, 4($t1)
 
+	# Set up Moving platfrom STATES
+	la $t1, MovingPlatformState
+	li $t2, 1
+	sw $t2, 0($t1)
+	
+	la $t1, MovingPlatformState2
+	li $t2, 1
+	sw $t2, 0($t1)
+
+	# Set up moving platform initial coordinates
+	la $t1, MovingPlatformCurrentCoordinateA
+	li $t2, 48
+	li $t3, 39
+	sw $t2, 0($t1)
+	sw $t3, 4($t1)
+	
+	la $t1, MovingPlatformCurrentCoordinateB
+	li $t2, 61
+	li $t3, 39
+	sw $t2, 0($t1)
+	sw $t3, 4($t1)
+
+	la $t1, MovingPlatform2CurrentCoordinateA
+	li $t2, 48
+	li $t3, 27
+	sw $t2, 0($t1)
+	sw $t3, 4($t1)
+	
+	la $t1, MovingPlatform2CurrentCoordinateB
+	li $t2, 61
+	li $t3, 27
+	sw $t2, 0($t1)
+	sw $t3, 4($t1)
+
+
+	
+	
+	
+	
 
 
 mainLoop:
@@ -926,27 +1034,165 @@ Step2: # Update Moving Platform
 	
 MovingPlatFormPatrolLeft:
 	# Erase and Redraw platform
-		# jal Erase
+		
 		# updateCurrentCoordinate
-		# jal drawmovingplatform
-	
-	# update the movingplatformState
+		la $t2, MovingPlatformCurrentCoordinateA
+		lw $t3, 0($t2)
+		addi $t4, $t3, -1
+		la $t5, MovingPlatformEndCoordinateA
+		lw $t6, 0($t5)
+		blt $t4, $t6, DonePatrolLeft
+		# jal Erase
+		jal EraseMovingPlatformA
+		
+		la $t2, MovingPlatformCurrentCoordinateA
+		lw $t3, 0($t2)
+		addi $t4, $t3, -1
+		sw $t4, 0($t2)
+		
+		la $t2, MovingPlatformCurrentCoordinateB
+		lw $t3, 0($t2)
+		addi $t4, $t3, -1
+		sw $t4, 0($t2)
+		
+		jal DrawMovingPlatformA
+		j CheckPlatB
+		
+DonePatrolLeft:
+		# Update Moving Platform State and goes to the next one
+		la $t0, MovingPlatformState
+		li $t1, 2
+		sw $t1, 0($t0)
+		j CheckPlatB
 		# CheckCollison?
 
 	# branch to next step in mainloop
-	j Step3
+	#		j Step3
 	
 MovingPlatFormPatrolRight:
 	# Erase and Redraw platform
-		# jal Erase
+		# Erase and Redraw platform
+		
 		# updateCurrentCoordinate
-		# jal drawmovingplatform
+		la $t2, MovingPlatformCurrentCoordinateB
+		lw $t3, 0($t2)
+		addi $t4, $t3, 1
+		la $t5, MovingPlatformInitialCoordinateB
+		lw $t6, 0($t5)
+		bgt $t4, $t6, DonePatrolRight
+		# jal Erase
+		jal EraseMovingPlatformA
+		
+		la $t2, MovingPlatformCurrentCoordinateA
+		lw $t3, 0($t2)
+		addi $t4, $t3, 1
+		sw $t4, 0($t2)
+		
+		
+		la $t2, MovingPlatformCurrentCoordinateB
+		lw $t3, 0($t2)
+		addi $t4, $t3, 1
+		sw $t4, 0($t2)
+		
+		jal DrawMovingPlatformA
+		j CheckPlatB
+		
+DonePatrolRight:
+		# Update Moving Platform State and goes to the next one
+		la $t0, MovingPlatformState
+		li $t1, 1
+		sw $t1, 0($t0)
+		j CheckPlatB
+		# CheckCollison?
+
+CheckPlatB:
+	la $t0, MovingPlatformState2
+	lw $t1, 0($t0)
 	
-	# update the movingplatformState
+	beq $t1, 1, MovingPlatFormPatrolUp
+	beq $t1, 2, MovingPlatFormPatrolDown
+	
+MovingPlatFormPatrolUp:
+	# Erase and Redraw platform
+		
+		# updateCurrentCoordinate
+		la $t2, MovingPlatform2CurrentCoordinateA
+		lw $t3, 4($t2)
+		addi $t4, $t3, -1
+		la $t5, MovingPlatform2EndCoordinateA
+		lw $t6, 4($t5)
+		blt $t4, $t6, DonePatrolUp
+		# jal Erase
+		jal EraseMovingPlatformB
+		
+		la $t2, MovingPlatform2CurrentCoordinateA
+		lw $t3, 4($t2)
+		addi $t4, $t3, -1
+		sw $t4, 4($t2)
+		la $t2, MovingPlatform2CurrentCoordinateB
+		lw $t3, 4($t2)
+		addi $t4, $t3, -1
+		sw $t4, 4($t2)
+		
+		jal DrawMovingPlatformB
+		j Step3
+		
+DonePatrolUp:
+		# Update Moving Platform State and goes to the next one
+		la $t0, MovingPlatformState2
+		li $t1, 2
+		sw $t1, 0($t0)
+		j Step3
 		# CheckCollison?
 
 	# branch to next step in mainloop
-	j Step3
+	#		j Step3
+	
+MovingPlatFormPatrolDown:
+	# Erase and Redraw platform
+		# Erase and Redraw platform
+		
+		# updateCurrentCoordinate
+		la $t2, MovingPlatform2CurrentCoordinateA
+		lw $t3, 4($t2)
+		addi $t4, $t3, 1
+		la $t5, MovingPlatform2InitialCoordinateA
+		lw $t6, 4($t5)
+		bgt $t4, $t6, DonePatrolDown
+		# jal Erase
+		jal EraseMovingPlatformB
+		
+		la $t2, MovingPlatform2CurrentCoordinateA
+		lw $t3, 4($t2)
+		addi $t4, $t3, 1
+		sw $t4, 4($t2)
+		
+		la $t2, MovingPlatform2CurrentCoordinateB
+		lw $t3, 4($t2)
+		addi $t4, $t3, 1
+		sw $t4, 4($t2)
+		
+		jal DrawMovingPlatformB
+		j Step3
+		
+DonePatrolDown:
+		# Update Moving Platform State and goes to the next one
+		la $t0, MovingPlatformState2
+		li $t1, 1
+		sw $t1, 0($t0)
+		j Step3
+		# CheckCollison?
+		
+
+
+
+
+
+
+
+
+
+
 
 
 Step3: # Update Enemie
@@ -2672,28 +2918,249 @@ DoneFilling:
 ####3######################### Fill Score Box <-------------------
 
 ########### DrawMovingPlatformFUNCTION --------------------->
-# 10. 
+# 10. a
+DrawMovingPlatformA:
+	# push the ra to the stack
+	addi $sp, $sp, -4
+	sw $ra, 0($sp)
+	
+	
+	
+	# Set up Platform length and Moving Ranges
+	la $t1, MovingPlatformCurrentCoordinateA
+	# Load X coordinate
+	lw $t2, 0($t1)
+	# Load Y coordinate
+	lw $t3, 4($t1)
+	# Calculate Address
+	move $a0, $t2
+	move $a1, $t3
 
+	jal CalculateAddress
+	move $t4, $v0		
+	
+	# Get endpoint
+	la $t5, MovingPlatformCurrentCoordinateB
+	# Load X coordinate
+	lw $t6, 0($t5)
+	# Load Y coordinate
+	lw $t7, 4($t5)
+	# Calculate Address
+	move $a0, $t6
+	move $a1, $t7
+	jal CalculateAddress
+	move $t0, $v0		
+	
+StartDrawingMovingA: 
 
+	li $t7, PlatformGreen
+DrawMovingPlatI:
+	bgt $t4, $t0, DoneDrawA
+	sw $t7, 0($t4)
+	
+	addi $t4, $t4, 4
+	j DrawMovingPlatI
 
+DoneDrawA:
+	
+	# pop ra off the stack and jump back to caller
+	lw $ra, 0($sp)
+	addi $sp, $sp, 4
+	
+	jr $ra
+	
 
 	
 
 
-# 10.
+# 10.a
 ############################### DrawMovingPlatformFunction <-----------------
 
+########### DrawMovingPlatform2FUNCTION --------------------->
+# 10.b
+DrawMovingPlatformB:
+	# push the ra to the stack
+	addi $sp, $sp, -4
+	sw $ra, 0($sp)
+	
+	
+	
+	# Set up Platform length and Moving Ranges
+	la $t1, MovingPlatform2CurrentCoordinateA
+	# Load X coordinate
+	lw $t2, 0($t1)
+	# Load Y coordinate
+	lw $t3, 4($t1)
+	# Calculate Address
+	move $a0, $t2
+	move $a1, $t3
+
+	jal CalculateAddress
+	move $t4, $v0		
+	
+	# Get endpoint
+	la $t5, MovingPlatform2CurrentCoordinateB
+	# Load X coordinate
+	lw $t6, 0($t5)
+	# Load Y coordinate
+	lw $t7, 4($t5)
+	# Calculate Address
+	move $a0, $t6
+	move $a1, $t7
+	jal CalculateAddress
+	move $t0, $v0		
+	
+StartDrawingMovingB: 
+
+	li $t7, PlatformGreen
+DrawMovingPlatII:
+	bgt $t4, $t0, DoneDrawB
+	sw $t7, 0($t4)
+	
+	addi $t4, $t4, 4
+	j DrawMovingPlatII
+
+DoneDrawB:
+	
+	# pop ra off the stack and jump back to caller
+	lw $ra, 0($sp)
+	addi $sp, $sp, 4
+	
+	jr $ra
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 10.b
+############################### DrawMovingPlatform2Function <-----------------
+
+
+
 ########### EraseMovingPlatformFUNCTION --------------------->
-# 11. 
+# 11.a
+EraseMovingPlatformA:
+	# push the ra to the stack
+	addi $sp, $sp, -4
+	sw $ra, 0($sp)
+	
+	
+	
+	# Set up Platform length and Moving Ranges
+	la $t1, MovingPlatformCurrentCoordinateA
+	# Load X coordinate
+	lw $t2, 0($t1)
+	# Load Y coordinate
+	lw $t3, 4($t1)
+	# Calculate Address
+	move $a0, $t2
+	move $a1, $t3
+
+	jal CalculateAddress
+	move $t4, $v0		
+	
+	# Get endpoint
+	la $t5, MovingPlatformCurrentCoordinateB
+	# Load X coordinate
+	lw $t6, 0($t5)
+	# Load Y coordinate
+	lw $t7, 4($t5)
+	# Calculate Address
+	move $a0, $t6
+	move $a1, $t7
+	jal CalculateAddress
+	move $t0, $v0		
+	
+StartEraseMovingA: 
+
+	li $t7, Black
+EraseMovingPlatI:
+	bgt $t4, $t0, DoneEraseA
+	sw $t7, 0($t4)
+	
+	addi $t4, $t4, 4
+	j EraseMovingPlatI
+
+DoneEraseA:
+	
+	# pop ra off the stack and jump back to caller
+	lw $ra, 0($sp)
+	addi $sp, $sp, 4
+	
+	jr $ra
+	
+
+	
 
 
 
 
-
-# 11.
+# 11.a
 ############################### EraseMovingPlatformFunction <-----------------
 
+########### EraseMovingPlatformFUNCTION --------------------->
+# 11.b
 
+EraseMovingPlatformB:
+	# push the ra to the stack
+	addi $sp, $sp, -4
+	sw $ra, 0($sp)
+	
+	
+	
+	# Set up Platform length and Moving Ranges
+	la $t1, MovingPlatform2CurrentCoordinateA
+	# Load X coordinate
+	lw $t2, 0($t1)
+	# Load Y coordinate
+	lw $t3, 4($t1)
+	# Calculate Address
+	move $a0, $t2
+	move $a1, $t3
+
+	jal CalculateAddress
+	move $t4, $v0		
+	
+	# Get endpoint
+	la $t5, MovingPlatform2CurrentCoordinateB
+	# Load X coordinate
+	lw $t6, 0($t5)
+	# Load Y coordinate
+	lw $t7, 4($t5)
+	# Calculate Address
+	move $a0, $t6
+	move $a1, $t7
+	jal CalculateAddress
+	move $t0, $v0		
+	
+StartEraseMovingB: 
+
+	li $t7, Black
+EraseMovingPlatII:
+	bgt $t4, $t0, DoneEraseB
+	sw $t7, 0($t4)
+	
+	addi $t4, $t4, 4
+	j EraseMovingPlatII
+
+DoneEraseB:
+	
+	# pop ra off the stack and jump back to caller
+	lw $ra, 0($sp)
+	addi $sp, $sp, 4
+	
+	jr $ra
+
+# 11.b
+############################### EraseMovingPlatformFunction <-----------------
 
 
 
