@@ -197,14 +197,14 @@ MovingPlatformEndCoordinateB:	.word	56 39
 # MovingPlatformInitial [48, 40] ---- [61, 40]   length = 14
 # MovingPlatformEndRange [ 44, 40] ------[56, 40]   length = 14
 
-MovingPlatform2InitialCoordinateA:	.word	48 27
-
-MovingPlatform2InitialCoordinateB:	.word	61 27
-
-MovingPlatform2EndCoordinateA:		.word	48 13
-
-MovingPlatform2EndCoordinateB:		.word	61 13
-
+MovingPlatform2InitialCoordinateA:	.word	48 29
+# 27
+MovingPlatform2InitialCoordinateB:	.word	61 29
+# 27
+MovingPlatform2EndCoordinateA:		.word	48 15
+# 13
+MovingPlatform2EndCoordinateB:		.word	61 15
+# 13
 
 
 
@@ -273,7 +273,9 @@ FillScoreBox3Coordinate:	.word	12 2
 
 #	[12,5]	[15,5]
 
+DrawGameOverCoordinate:		.word	14 22
 
+DrawYouWinCoordinate:		.word
 
 ###########################################################################################################
 .text 
@@ -982,13 +984,13 @@ InitializeState:
 
 	la $t1, MovingPlatform2CurrentCoordinateA
 	li $t2, 48
-	li $t3, 27
+	li $t3, 29
 	sw $t2, 0($t1)
 	sw $t3, 4($t1)
 	
 	la $t1, MovingPlatform2CurrentCoordinateB
 	li $t2, 61
-	li $t3, 27
+	li $t3, 29
 	sw $t2, 0($t1)
 	sw $t3, 4($t1)
 
@@ -1938,7 +1940,7 @@ FallDown:
 	#move $a1, $t3
 	#jal CalculateAddress
 	#move $
-
+	
 
 	# Erase Current Main Character
 	jal EraseMainCharacter
@@ -2380,6 +2382,10 @@ DrawYouWinPage:
 
 
 GameOverPage:
+	jal ClearScreenSetup
+	
+	j DrawGameOverPage
+	
 	j END
 
 
@@ -3201,9 +3207,475 @@ DoneEraseB:
 
 ################# Draw Game Over Page ################
 
+DrawGameOverPage:
+	li $t0, BASE_ADDRESS
+	li $t1, BoundaryPink
+	
+# [14, 22] -[18, 22] ; [23, 22] - [25, 22] ; [31, 23]-[35,23]; [41,22]-[43,22]
+# 
+	la $t2, DrawGameOverCoordinate
+	lw $t3, 0($t2)
+	lw $t4, 4($t2)
+		
+	move $a0, $t3
+	move $a1, $t4
+	jal CalculateAddress
+	move $t5, $v0
+DrawPink:
+	# Print G 1	
+	li $t1, BoundaryPink
+	sw $t1, 0($t5)
+	#2
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	#3
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	#4
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	#5
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	#6
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	#7
+	addi $t5, $t5, -16
+	sw $t1, 0($t5)
+	#8
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	#9
+	addi $t5, $t5, 512
+	sw $t1, 0($t5)
+	#10
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	#11
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	#12
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	#13
+	addi $t5, $t5, 260
+	sw $t1, 0($t5)
+	#14
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	#15
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	#16
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	#17
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	#18
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	#19
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	#20
+	addi $t5, $t5, -4
+	sw $t1, 0($t5)
+	# Start print A #1
+	addi $t5, $t5, 24
+	sw $t1, 0($t5)
+	#2
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	#3
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	#4
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	#5
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	#6
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	#7
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	#8
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	#9
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	#10
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	#11
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	#12
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	#13
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	#14
+	addi $t5, $t5, -4
+	sw $t1, 0($t5)
+	#15
+	addi $t5, $t5, -4
+	sw $t1, 0($t5)
+	#16
+	addi $t5, $t5, -4
+	sw $t1, 0($t5)
+	#17
+	addi $t5, $t5, 252
+	sw $t1, 0($t5)
+	#18
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	#19
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	#20
+	addi $t5, $t5, 16
+	sw $t1, 0($t5)
+	#21
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	#22
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	# Start Printing M #1  STARTED FROM middle left corner
+	addi $t5, $t5, 16
+	sw $t1, 0($t5)
+	#2
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	#3
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	#4
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	#5 
+	addi $t5, $t5, -252
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	#
+	addi $t5, $t5, 260
+	sw $t1, 0($t5)
+	#
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	#
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	#
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	#
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	#
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	# 
+	addi $t5, $t5, -12
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	##
+	addi $t5, $t5, 1268
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 40
+	sw $t1, 0($t5)
+	#
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	#
+	addi $t5, $t5, 1280
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 260
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	###
+	addi $t5, $t5, -768
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -4
+	sw $t1, 0($t5)
+	###
+	
+	addi $t5, $t5, -1024
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	
+	#####
+	
+	addi $t5, $t5, 3724
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 260
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	#
+	addi $t5, $t5, 252
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -260
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	#### V starts here
+	addi $t5, $t5, 36
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 512
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 260
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 260
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -252
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -252
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	# E starts here
+	addi $t5, $t5, 20
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 244
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 260
+	sw $t1, 0($t5)
 
-
-
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -768
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -4
+	sw $t1, 0($t5)
+	
+	## R starts here
+	
+	addi $t5, $t5, 796
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 260
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -784
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	
+	
+	j END
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 
 
