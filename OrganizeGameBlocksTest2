@@ -851,11 +851,43 @@ InitializeState:
 	# Set Main Character State
 	la $t1, MainCharacterState
 	sw $zero, 0($t1)
+	
+	# Set initial Num Collected
+	la $t1, NumCollected
+	sw $zero, 0($t1)
+	
+	# Set initial Num Filled
+	la $t1, NumFilled
+	sw $zero, 0($t1)
+	
+	# Reset pickup1 initial coordinates
+	la $t1, PickUp1CoordinateXY
+	li $t2, 22
+	sw $t2, 0($t1)
+	li $t2, 50
+	sw $t2, 4($t1)
 
+	
+	# Reset pickup2 initial coordinates
+	la $t1, PickUp2CoordinateXY
+	li $t2, 35
+	sw $t2, 0($t1)
+	li $t2, 50
+	sw $t2, 4($t1)
 
+	# Reset pickup3 initial coordinates
+	la $t1, PickUp3CoordinateXY
+	li $t2, 54
+	sw $t2, 0($t1)
+	li $t2, 38
+	sw $t2, 4($t1)
 	
-	
-	
+	# Reset MainCharacter initial Coordinate?
+	la $t1, MainCharacterCurrentCoordinate
+	li $t2, 4
+	sw $t2, 0($t1)
+	li $t2, 62
+	sw $t2, 4($t1)
 
 
 
@@ -2687,6 +2719,7 @@ DoneFilling:
 ###############################      <-----------------
 
 
+################3 Draw YOU WON PAGE#################
 
 
 
@@ -2697,9 +2730,19 @@ DoneFilling:
 
 
 
+#####################################################
+
+################# Draw Game Over Page ################
 
 
 
+
+
+
+
+
+
+######################################################
 
 
 
