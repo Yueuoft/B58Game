@@ -1,3 +1,55 @@
+#####################################################################
+#
+# CSCB58 Winter 2024 Assembly Final Project
+# University of Toronto, Scarborough
+#
+# Student: Yue Li, 1004746091, liyue42, yuee.li@mail.utoronto.ca
+#
+# Bitmap Display Configuration:
+# - Unit width in pixels: 4 (update this as needed)
+# - Unit height in pixels: 4 (update this as needed)
+# - Display width in pixels: 256 (update this as needed)
+# - Display height in pixels: 256 (update this as needed)
+# - Base Address for Display: 0x10008000 ($gp)
+#
+# Which milestones have been reached in this submission?
+# (See the assignment handout for descriptions of the milestones)
+# - Milestone 4 
+#
+# Which approved features have been implemented for milestone 4?
+# (See the assignment handout for the list of additional features)
+
+#
+# 1. Moving objects (2 marks) 
+#	[enemies patrol left and right across on the platform they are on; pickups hovering gently up and down]
+# 2. Moving platforms (2 marks)
+#	[Two moving platforms;]
+# 3. Double jump (1 mark): 
+#	allow the player to jump when in mid-air, but only once!
+##
+######## Pick-up effects (2 marks): 
+#	 Make the player jump higher? Make enemies bigger? Restore player health? 
+#	Turn the player into a frog? Anything goes as long as at least 3 different effects. 
+#
+#
+# Link to video demonstration for final submission:
+# - (insert YouTube / MyMedia / other URL here). Make sure we can view it!
+#
+# Are you OK with us sharing the video with people outside course staff?
+# - yes, and please share this project github link as well!
+#
+# Any additional information that the TA needs to know:
+# - (write here, if any)
+#
+#####################################################################
+
+
+
+
+
+
+
+
 
 
 .eqv BASE_ADDRESS 	0x10008000
@@ -275,7 +327,7 @@ FillScoreBox3Coordinate:	.word	12 2
 
 DrawGameOverCoordinate:		.word	14 22
 
-DrawYouWinCoordinate:		.word
+DrawYouWinCoordinate:		.word	10 23
 
 ###########################################################################################################
 .text 
@@ -2378,6 +2430,8 @@ Step10: # Sleep for a while and j back to mainLoop
 	
 
 DrawYouWinPage:
+	jal ClearScreenSetup
+	j DrawYouWin
 	j END
 
 
@@ -3193,15 +3247,217 @@ DoneEraseB:
 
 
 ################3 Draw YOU WON PAGE#################
+DrawYouWin:
+	
+	la $t2, DrawYouWinCoordinate
+	lw $t3, 0($t2)
+	lw $t4, 4($t2)
+		
+	move $a0, $t3
+	move $a1, $t4
+	jal CalculateAddress
+	move $t5, $v0
 
+	li $t1, CRLightBlue
+	# Start Y
+	sw $t1, 0($t5)
+	#2
+	addi $t5, $t5, 260
+	sw $t1, 0($t5)
+	#3
+	addi $t5, $t5, 260
+	sw $t1, 0($t5)
+	#4
+	addi $t5, $t5, -252
+	sw $t1, 0($t5)
+	#5
+	addi $t5, $t5, -252
+	sw $t1, 0($t5)
+	#6
+	addi $t5, $t5, 1016
+	sw $t1, 0($t5)
+	#7  O starts here for you
+	addi $t5, $t5, 28
+	sw $t1, 0($t5)
 
-
-
-
-
-
-
-
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -252
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -260
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 252
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	# U starts here for you
+	addi $t5, $t5, 32
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 12
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 252
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -4
+	sw $t1, 0($t5)
+	
+	# O for won starts here
+	addi $t5, $t5, 1792
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 260
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 252
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -4
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -260
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	# N starts here for won
+	addi $t5, $t5, 36
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 512
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 12
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 248
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 260
+	sw $t1, 0($t5)
+	# ! starts here
+	addi $t5, $t5, 40
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 1536
+	sw $t1, 0($t5)
+	
+	# W for won starts here
+	
+	addi $t5, $t5, -380
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -252
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -252
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -16
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 256
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 260
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 16
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, 260
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -252
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -252
+	sw $t1, 0($t5)
+	
+	addi $t5, $t5, -256
+	sw $t1, 0($t5)
+	
+	
+	j END
 
 #####################################################
 
