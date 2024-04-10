@@ -1,7 +1,7 @@
 This is a MIPS assembly game running on MARS 
 
 
-feature: Moving Platforms, Patroling Enemie, Hoving up and Down PickUps, control player by "w" "a" "d", double jump is allowed. 
+feature: Moving Platforms, Patroling Enemie, Hoving up and Down PickUps. Control player by "w" "a" "d", double jump is allowed. 
 "r" to restart and "q" to quit the game. 
 
 Collect all three pick ups to win the game
